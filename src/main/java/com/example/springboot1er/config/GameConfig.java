@@ -1,4 +1,4 @@
-package com.example.springboot1er;
+package com.example.springboot1er.config;
 
 import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGameFactory;
 import fr.le_campus_numerique.square_games.engine.taquin.TaquinGameFactory;

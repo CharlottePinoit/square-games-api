@@ -1,4 +1,4 @@
-package com.example.springboot1er;
+package com.example.springboot1er.service;
 
 import fr.le_campus_numerique.square_games.engine.GameFactory;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.example.springboot1er;
+package com.example.springboot1er.service;
 
 import org.springframework.stereotype.Service;
 import java.util.Random;
