@@ -5,6 +5,10 @@ import fr.le_campus_numerique.square_games.engine.taquin.TaquinGameFactory;
 import fr.le_campus_numerique.square_games.engine.connectfour.ConnectFourGameFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 @Configuration
 public class GameConfig {
@@ -22,6 +26,14 @@ public class GameConfig {
     @Bean
     public ConnectFourGameFactory connectFourGameFactory() {
         return new ConnectFourGameFactory();
+    }
+
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
     }
 
 }

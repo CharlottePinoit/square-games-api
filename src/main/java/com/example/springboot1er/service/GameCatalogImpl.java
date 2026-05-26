@@ -1,3 +1,5 @@
+/*
+Plus nécessaire car on utilise GamePlugin
 package com.example.springboot1er.service;
 
 import fr.le_campus_numerique.square_games.engine.GameFactory;
@@ -27,7 +29,7 @@ public class GameCatalogImpl implements GameCatalog {
 
 }
 
-/*package com.example.springboot1er;
+package com.example.springboot1er;
 
 import fr.le_campus_numerique.square_games.engine.tictactoe.TicTacToeGameFactory;
 import org.springframework.stereotype.Service;
