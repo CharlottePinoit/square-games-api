@@ -13,10 +13,11 @@ import java.util.*;
 @Service
 public class GameServiceImpl implements GameService {
 
-    private final Map<UUID, Game> games = new HashMap<>();
+    private final GameDao gameDao;
     private final List<GamePlugin> gamePlugins;
 
-    public GameServiceImpl(List<GamePlugin> gamePlugins) {
+    public GameServiceImpl(GameDao gameDao, List<GamePlugin> gamePlugins) {
+        this.gameDao = gameDao;
         this.gamePlugins = gamePlugins;
     }
 
@@ -25,8 +26,7 @@ public class GameServiceImpl implements GameService {
         for (GamePlugin plugin : gamePlugins) {
             if (plugin.getGameId().equals(params.getGameType())) {
                 Game game = plugin.createGame();
-                games.put(game.getId(), game);
-                return game;
+                return gameDao.upsert(game);
             }
         }
         throw new IllegalArgumentException("Type de jeu inconnu : " + params.getGameType());
@@ -34,12 +34,14 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Game getGame(UUID gameId) {
-        return games.get(gameId);
+        return gameDao.findById(gameId.toString())
+                .orElseThrow(() -> new IllegalArgumentException("Partie introuvable : " + gameId));
     }
 
     @Override
     public Collection<CellPosition> getAvailableMoves(UUID gameId, UUID playerId) {
-        Game game = games.get(gameId);
+        Game game = gameDao.findById(gameId.toString())
+                .orElseThrow(() -> new IllegalArgumentException("Partie introuvable : " + gameId));
         for (Token token : game.getRemainingTokens()) {
             if (token.getOwnerId().isPresent()
                     && token.getOwnerId().get().equals(playerId)
@@ -52,7 +54,8 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Game playMove(UUID gameId, MoveParams params) {
-        Game game = games.get(gameId);
+        Game game = gameDao.findById(gameId.toString())
+                .orElseThrow(() -> new IllegalArgumentException("Partie introuvable : " + gameId));
         for (Token token : game.getRemainingTokens()) {
             if (token.getOwnerId().isPresent()
                     && token.getOwnerId().get().equals(params.getPlayerId())
@@ -62,7 +65,7 @@ public class GameServiceImpl implements GameService {
                 } catch (InvalidPositionException e) {
                     throw new IllegalArgumentException("Position invalide : " + e.getMessage());
                 }
-                return game;
+                return gameDao.upsert(game);
             }
         }
         throw new IllegalArgumentException("Aucun jeton jouable pour ce joueur");
