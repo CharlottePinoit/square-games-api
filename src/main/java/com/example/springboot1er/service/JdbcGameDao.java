@@ -5,9 +5,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.context.annotation.Primary;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository
@@ -29,17 +28,34 @@ public class JdbcGameDao implements GameDao {
 
     @Override
     public Optional<Game> findById(String gameId) {
+
         String sql = "SELECT * FROM games WHERE id = :id";
-        List<Game> results = jdbcTemplate.query(sql, Map.of("id", gameId), (rs, rowNum) -> {
-            String factoryId = rs.getString("factory_id");
-            for (GamePlugin plugin : gamePlugins) {
-                if (plugin.getGameId().equals(factoryId)) {
-                    return plugin.createGame();
-                }
-            }
-            throw new IllegalArgumentException("Factory inconnue : " + factoryId);
-        });
-        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+
+        List<Game> results = jdbcTemplate.query(
+                sql,
+                Map.of("id", gameId),
+                (rs, rowNum) -> {
+
+                    String factoryId = rs.getString("factory_id");
+                    int boardSize = rs.getInt("board_size");
+                    String playerIdsString = rs.getString("player_ids");
+
+                    Set<UUID> playerIds = Arrays.stream(playerIdsString.split(","))
+                            .map(UUID::fromString)
+                            .collect(Collectors.toSet());
+
+                    for (GamePlugin plugin : gamePlugins) {
+                        if (plugin.getGameId().equals(factoryId)) {
+                            return plugin.createGame(boardSize, playerIds);
+                        }
+                    }
+
+                    throw new IllegalArgumentException("Factory inconnue : " + factoryId);
+                });
+
+        return results.isEmpty()
+                ? Optional.empty()
+                : Optional.of(results.get(0));
     }
 
     @Override

@@ -1,11 +1,11 @@
 package com.example.springboot1er.controller;
 
-import com.example.springboot1er.model.GameCreationParams;
+import com.example.springboot1er.DTO.GameCreationParams;
 import com.example.springboot1er.service.GameService;
 import fr.le_campus_numerique.square_games.engine.Game;
 import org.springframework.web.bind.annotation.*;
 import fr.le_campus_numerique.square_games.engine.CellPosition;
-import com.example.springboot1er.model.MoveParams;
+import com.example.springboot1er.DTO.MoveParams;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -21,8 +21,11 @@ public class GameController {
     }
 
     @PostMapping
-    public Game createGame(@RequestBody GameCreationParams params) {
-        return gameService.createGame(params);
+    public Game createGame(
+            @RequestHeader("X-UserId") UUID userId,
+            @RequestBody GameCreationParams params) {
+
+        return gameService.createGame(userId, params);
     }
 
     @GetMapping("/{gameId}")

@@ -1,7 +1,7 @@
 package com.example.springboot1er.service;
 
-import com.example.springboot1er.model.GameCreationParams;
-import com.example.springboot1er.model.MoveParams;
+import com.example.springboot1er.DTO.GameCreationParams;
+import com.example.springboot1er.DTO.MoveParams;
 import fr.le_campus_numerique.square_games.engine.CellPosition;
 import fr.le_campus_numerique.square_games.engine.Game;
 import fr.le_campus_numerique.square_games.engine.InvalidPositionException;
@@ -22,10 +22,14 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Game createGame(GameCreationParams params) {
+    public Game createGame(UUID userId, GameCreationParams params) {
         for (GamePlugin plugin : gamePlugins) {
             if (plugin.getGameId().equals(params.getGameType())) {
-                Game game = plugin.createGame();
+                Set<UUID> players = Set.of(
+                        userId,
+                        UUID.randomUUID()
+                );
+                Game game = plugin.createGame(params.getBoardSize(), players);
                 return gameDao.upsert(game);
             }
         }

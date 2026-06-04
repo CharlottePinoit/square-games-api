@@ -1,4 +1,4 @@
-package com.example.springboot1er.model;
+package com.example.springboot1er.DTO;
 
 import fr.le_campus_numerique.square_games.engine.CellPosition;
 import java.util.UUID;

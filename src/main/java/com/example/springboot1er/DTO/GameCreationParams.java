@@ -1,4 +1,4 @@
-package com.example.springboot1er.model;
+package com.example.springboot1er.DTO;
 
 public class GameCreationParams {
     private String gameType;

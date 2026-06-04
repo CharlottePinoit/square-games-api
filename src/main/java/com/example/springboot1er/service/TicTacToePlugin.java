@@ -8,6 +8,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
 
 @Component
 public class TicTacToePlugin implements GamePlugin {
@@ -38,8 +40,8 @@ public class TicTacToePlugin implements GamePlugin {
     }
 
     @Override
-    public Game createGame() {
-        return factory.createGame(defaultPlayerCount, defaultBoardSize);
+    public Game createGame(int boardSize, Set<UUID> playerIds) {
+        return factory.createGame(boardSize, playerIds);
     }
 
 }

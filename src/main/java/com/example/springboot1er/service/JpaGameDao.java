@@ -77,9 +77,12 @@ public class JpaGameDao implements GameDao {
     }
 
     private Game toGame(GameEntity entity) {
+        Set<UUID> playerIds = Arrays.stream(entity.playerIds.split(","))
+                .map(UUID::fromString)
+                .collect(java.util.stream.Collectors.toSet());
         for (GamePlugin plugin : gamePlugins) {
             if (plugin.getGameId().equals(entity.factoryId)) {
-                return plugin.createGame();
+                return plugin.createGame(entity.boardSize, playerIds);
             }
         }
         throw new IllegalArgumentException("Factory inconnue : " + entity.factoryId);
