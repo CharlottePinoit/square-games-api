@@ -45,5 +45,9 @@ public class GameController {
             @RequestBody MoveParams params) {
         return gameService.playMove(gameId, params);
     }
-
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(org.springframework.http.HttpStatus.BAD_REQUEST)
+    public String handleIllegalArgument(IllegalArgumentException e) {
+        return e.getMessage();
+    }
 }

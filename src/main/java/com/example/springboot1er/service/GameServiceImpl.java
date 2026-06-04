@@ -15,14 +15,23 @@ public class GameServiceImpl implements GameService {
 
     private final GameDao gameDao;
     private final List<GamePlugin> gamePlugins;
+    private final UserApiClient userApiClient;
 
-    public GameServiceImpl(GameDao gameDao, List<GamePlugin> gamePlugins) {
+    public GameServiceImpl(
+            GameDao gameDao,
+            List<GamePlugin> gamePlugins,
+            UserApiClient userApiClient
+    ) {
         this.gameDao = gameDao;
         this.gamePlugins = gamePlugins;
+        this.userApiClient = userApiClient;
     }
 
     @Override
     public Game createGame(UUID userId, GameCreationParams params) {
+        if (!userApiClient.userExists(userId)) {
+            throw new IllegalArgumentException("Utilisateur introuvable : " + userId);
+        }
         for (GamePlugin plugin : gamePlugins) {
             if (plugin.getGameId().equals(params.getGameType())) {
                 Set<UUID> players = Set.of(
